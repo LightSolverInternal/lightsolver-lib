@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ls-lib"
+version = "0.1.0"
+authors = [
+  { name="Matan Arkin", email="matan@lightsolver.com" },
+]
+description = "Tools for developers using LightSolver's Cloud Platform"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+  'numpy==1.26.4'
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+]
+[project.urls]
+"Homepage" = "https://lightsolver.com"
+
+[tool.setuptools.packages.find]
+include = ["ls_lib"]

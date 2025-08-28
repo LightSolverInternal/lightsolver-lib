@@ -1,0 +1,76 @@
+name: Build and Publish Python packages [PyPi]
+run-name: Build ls-lib Python package by @${{ github.actor }}
+
+on:
+  # This line enables you to run the CI manually. Manual runs are represented as `workflow_dispatch` event internally
+  workflow_dispatch:
+  push:
+    branches:
+      - production
+
+jobs:
+  checkout:
+    runs-on: [ lightsolver-github-runner ]
+    steps:
+      - uses: hmarr/debug-action@v2
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Checkout github-actions repository
+        uses: actions/checkout@v3
+        with:
+          repository: LightSolverInternal/github-actions
+          token: ${{ secrets.TOKEN }}
+          path: reusable-actions
+
+  # The environment isn't cleared between jobs on a single runner, so we can use `github-actions` repository we cloned
+  build-python-packages:
+    runs-on: [ lightsolver-github-runner ]
+    needs: checkout
+    env:
+      AWS_REGION: "eu-central-1"
+      CODE_ARTIFACT_REPOSITORY_NAME: "general-pypi-repo"
+      CODE_ARTIFACT_DOMAIN_NAME: "ls-prod"
+      AWS_ACCOUNT_OWNER_ID: "541441380680"
+    permissions:
+      id-token: write # This permission is required for trusted publish to PyPI: https://docs.pypi.org/trusted-publishers/
+
+    steps:
+      - name: Install Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Tag and Set version
+        id: tag-set-version
+        uses: ./reusable-actions/tag-set-python-package-version
+        with:
+          github_token: ${{ secrets.TOKEN}}
+          default_bump: "minor"
+
+      - name: Install pypa/build
+        run: |
+          python3 -m venv venv
+          source venv/bin/activate
+          pip install build
+      - name: Build a binary wheel and a source tarball
+        run: |
+          source venv/bin/activate
+          python3 -m build
+
+      - name: Get PYPI_TOKEN from AWS SSM
+        uses: Bardavon-Health/actions-aws-ssm-params-to-env@v1.3.2
+        with:
+          ssm-path: /ls/pypi/token #will get as PYPI_TOKEN
+
+      - name: Set API_TOKEN
+        id: pypi-api-token
+        # $GITHUB_OUTPUT points to a file that stores outputs from the CI in key=value format
+        run: echo "API_TOKEN=$PYPI_TOKEN" >> $GITHUB_OUTPUT
+
+      - name: Publish package to TestPyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ steps.pypi-api-token.outputs.API_TOKEN }}
+          repository-url: https://upload.pypi.org/legacy/
