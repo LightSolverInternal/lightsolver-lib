@@ -249,3 +249,58 @@ def calc_ising_energy_from_states(probmat_ising: numpy.ndarray, states: numpy.nd
     states_ising = numpy.array(states_ising).T
     energy = numpy.array(energy)
     return states_ising, energy
+
+
+class XYModelParams():
+
+    """
+    ## Parameters for converting an Ising model to the XY model.
+
+    ### Members:
+    - `alphaR` - Reference lasers self coupling strength - default: 0.7
+    - `alphaI` - Vortex lasers self coupling strength - default: 0.7
+    - `coupAmp` - Coupling amplitude, default: 0.3
+    - `exFieldCoup` - Coupling of external field, default : 0.3
+    """
+    def __init__(self, alphaR = 0.7, alphaI = 0.7, coupAmp = 0.3, exFieldCoup = 0.3):
+        self.alphaI = alphaI
+        self.alphaR = alphaR
+        self.coupAmp = coupAmp
+        self.exFieldCoup = exFieldCoup
+
+    def __eq__(self, other: object) -> bool:
+        return isinstance(other, XYModelParams) and \
+            self.alphaI == other.alphaI and \
+            self.alphaR == other.alphaR and \
+            self.coupAmp == other.coupAmp and \
+            self.exFieldCoup == other.exFieldCoup
+    
+
+def coupmatXY(problem_matrix:numpy.ndarray, modelParamsXY:XYModelParams, external_field=False):
+    """
+    ## Generate the coupling matrix for the XY model.
+
+    ### Parameters:
+    - `problem_matrix` - The input problem matrix
+    - `modelParamsXY` - The parameters for the XY model
+    - `external_field` - Whether to include an external field in the model
+
+    ### Returns:
+    - `coupling_matrix` - The generated coupling matrix for the XY model
+    """
+    N = problem_matrix.shape[0]
+    max_sum_rows = numpy.max(numpy.sum(numpy.abs(problem_matrix), axis=1))
+
+    if external_field:
+        coupling_matrix = numpy.zeros((N + 1, N + 1), dtype=numpy.float32)
+        coupling_matrix[1:, 1:] = - (problem_matrix / max_sum_rows) * modelParamsXY.coupAmp
+        numpy.fill_diagonal(coupling_matrix[1:, 1:], modelParamsXY.alphaI)
+        coupling_matrix[1:, 0] = - modelParamsXY.exFieldCoup * (problem_matrix.diagonal() / max_sum_rows)
+        coupling_matrix[0, 0] = modelParamsXY.alphaR
+    
+    else:
+        coupling_matrix = numpy.zeros((N, N), dtype=numpy.float32)
+        coupling_matrix = - (problem_matrix / max_sum_rows) * modelParamsXY.coupAmp
+        numpy.fill_diagonal(coupling_matrix, modelParamsXY.alphaI)
+
+    return coupling_matrix
