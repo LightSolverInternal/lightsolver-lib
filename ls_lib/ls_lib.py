@@ -276,7 +276,7 @@ class XYModelParams():
             self.exFieldCoup == other.exFieldCoup
     
 
-def coupmatXY(problem_matrix:numpy.ndarray, modelParamsXY:XYModelParams, external_field=False):
+def coupling_matrix_xy(problem_matrix:numpy.ndarray, modelParamsXY:XYModelParams, external_field=False):
     """
     ## Generate the coupling matrix for the XY model.
 
