@@ -3,7 +3,7 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "ls-lib"
+name = "lightsolver-lib"
 version = "0.1.0"
 authors = [
   { name="Matan Arkin", email="matan@lightsolver.com" },
@@ -23,4 +23,4 @@ classifiers = [
 "Homepage" = "https://lightsolver.com"
 
 [tool.setuptools.packages.find]
-include = ["ls_lib"]
+include = ["lightsolver_lib"]

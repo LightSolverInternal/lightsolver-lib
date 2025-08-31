@@ -1,5 +1,5 @@
 name: Build and Publish Python packages [PyPi]
-run-name: Build ls-lib Python package by @${{ github.actor }}
+run-name: Build lightsolver-lib Python package by @${{ github.actor }}
 
 on:
   # This line enables you to run the CI manually. Manual runs are represented as `workflow_dispatch` event internally

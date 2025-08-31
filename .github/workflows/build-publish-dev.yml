@@ -1,5 +1,5 @@
 name: Build Python packages [DEV]
-run-name: Build ls-lib Python package by @${{ github.actor }}
+run-name: Build lightsolver-lib Python package by @${{ github.actor }}
 
 on:
   workflow_dispatch:
