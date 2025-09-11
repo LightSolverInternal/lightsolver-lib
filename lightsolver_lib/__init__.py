@@ -5,6 +5,9 @@ from .lightsolver_lib import create_random_initial_states
 from .lightsolver_lib import calc_ising_energy_from_states
 from .lightsolver_lib import XYModelParams
 from .lightsolver_lib import coupling_matrix_xy
+from .lightsolver_lib import embed_coupmat
+from .lightsolver_lib import analyze_sol_XY
+from .lightsolver_lib import generate_animation
 
 __all__ = ['calc_ising_energies',
            'probmat_qubo_to_ising',
@@ -13,4 +16,7 @@ __all__ = ['calc_ising_energies',
            'calc_ising_energy_from_states',
            'XYModelParams',
            'coupling_matrix_xy',
+            'embed_coupmat',
+            'analyze_sol_XY',
+            'generate_animation',
            ]
