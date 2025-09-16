@@ -12,7 +12,8 @@ description = "Tools for developers using LightSolver's Cloud Platform"
 readme = "README.md"
 requires-python = ">=3.8"
 dependencies = [
-  'numpy==1.26.4'
+  'numpy==1.26.4',
+  'plotly'
 ]
 classifiers = [
     "Programming Language :: Python :: 3",
